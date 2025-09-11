@@ -1,0 +1,137 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+// --- SVG Icons for "How It Works" Section ---
+const RegisterIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+  </svg>
+);
+const SearchIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+  </svg>
+);
+const ApplyIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+  </svg>
+);
+const UploadIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+  </svg>
+);
+
+
+function About(): React.JSX.Element {
+  return (
+    <div className="space-y-16">
+      {/* --- Hero Section --- */}
+      <section className="relative bg-white rounded-lg shadow-md overflow-hidden -mt-8">
+        <img src="https://picsum.photos/seed/office/1200/400" alt="Modern Office" className="w-full h-64 object-cover"/>
+        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-white text-center px-4">About FIIT FORMACION PVT LTD</h1>
+        </div>
+      </section>
+
+      {/* --- Company Intro --- */}
+      <section className="bg-white p-8 rounded-lg shadow-md">
+        <p className="text-lg text-gray-700 leading-relaxed">
+          FIIT FORMACION PVT LTD is a Chennai based IT Solution Company Established in the year 2015. We are focusing on Software & Networking based Projects and Services. We want to be engaged in offering solutions for Man Power Recruitment, Head Hunting and Placement Service for corporate, Colleges and our students respectively. Committed to our slogan “We Help to Maintain Your Human Resources”, we strive to create talented professionals who contribute to the success of the company.
+        </p>
+        <p className="mt-4 text-lg text-gray-700 leading-relaxed">
+          Our sole objective is to dedicate ourselves for quality placements. Our services start with building up a relationship with the client and working on focused and well-defined job profiles to get the right person. We believe in meeting the client’s requirement within a framework of a specific schedule and in cost-effectiveness. We are committed to providing client satisfaction at all levels of our work.
+        </p>
+      </section>
+
+      {/* --- Statistics Section --- */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+        <div className="bg-white p-8 rounded-lg shadow-lg">
+          <h2 className="text-5xl font-bold text-primary-600">98+</h2>
+          <p className="mt-2 text-lg text-gray-600">Job For Countries</p>
+        </div>
+        <div className="bg-white p-8 rounded-lg shadow-lg">
+          <h2 className="text-5xl font-bold text-primary-600">3K+</h2>
+          <p className="mt-2 text-lg text-gray-600">Jobs Done</p>
+        </div>
+        <div className="bg-white p-8 rounded-lg shadow-lg">
+          <h2 className="text-5xl font-bold text-primary-600">12K+</h2>
+          <p className="mt-2 text-lg text-gray-600">Companies Jobs</p>
+        </div>
+      </section>
+
+      {/* --- How It Works --- */}
+      <section>
+        <h2 className="text-3xl font-bold text-center mb-10 text-gray-800">How It Works</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="bg-white p-6 rounded-lg shadow-md text-center">
+                <div className="flex justify-center mb-4"><RegisterIcon /></div>
+                <h3 className="text-xl font-semibold mb-2 text-gray-800"><span className="text-gray-400 font-light">01.</span> Register Your Account</h3>
+                <p className="text-gray-600">You need to create an account to find the best and preferred job.</p>
+            </div>
+             <div className="bg-white p-6 rounded-lg shadow-md text-center">
+                <div className="flex justify-center mb-4"><SearchIcon /></div>
+                <h3 className="text-xl font-semibold mb-2 text-gray-800"><span className="text-gray-400 font-light">02.</span> Search Your Job</h3>
+                <p className="text-gray-600">Connect with 20,000+ employers. Apply to millions of job opportunities.</p>
+            </div>
+             <div className="bg-white p-6 rounded-lg shadow-md text-center">
+                <div className="flex justify-center mb-4"><ApplyIcon /></div>
+                <h3 className="text-xl font-semibold mb-2 text-gray-800"><span className="text-gray-400 font-light">03.</span> Apply For Dream Job</h3>
+                <p className="text-gray-600">Focus your job search on careers in which you are truly interested.</p>
+            </div>
+             <div className="bg-white p-6 rounded-lg shadow-md text-center">
+                <div className="flex justify-center mb-4"><UploadIcon /></div>
+                <h3 className="text-xl font-semibold mb-2 text-gray-800"><span className="text-gray-400 font-light">04.</span> Upload Your Resume</h3>
+                <p className="text-gray-600">Post your resume and apply for millions of latest jobs.</p>
+            </div>
+        </div>
+      </section>
+
+       {/* --- About FIIT & Image Section --- */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div className="bg-white p-8 rounded-lg shadow-md">
+            <h3 className="text-2xl font-bold mb-4 text-gray-800">About FIIT</h3>
+            <ul className="space-y-3 text-gray-700 list-disc list-inside">
+                <li>A leading IT solutions company run by industrial experts.</li>
+                <li>Extensive experience in software development, integration, network support, and training.</li>
+                <li>Spread across 3000 sq.ft with state-of-the-art infrastructure.</li>
+                <li>Well-qualified faculties with industry experience.</li>
+                <li>Well-equipped labs and class-rooms with internet and VPN connectivity.</li>
+                <li>Training on various technologies with the latest curriculum designed by industry experts.</li>
+                <li>Provides value-added services like soft skills, personality development, and interview preparation.</li>
+            </ul>
+        </div>
+        <div>
+            <img src="https://picsum.photos/seed/teamwork/600/400" alt="Team collaborating" className="rounded-lg shadow-xl"/>
+        </div>
+      </section>
+
+       {/* --- Vision & Mission --- */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="bg-white p-8 rounded-lg shadow-md">
+          <h3 className="text-2xl font-bold mb-4 text-gray-800">Our Vision</h3>
+          <p className="text-gray-700">To be an acknowledged leader in placement services, serving every client, student, and job seeker with unfailing courtesy to get jobs as per their skill ethically and with Professional Loyalty.</p>
+        </div>
+        <div className="bg-white p-8 rounded-lg shadow-md">
+          <h3 className="text-2xl font-bold mb-4 text-gray-800">Our Mission</h3>
+          <p className="text-gray-700">To create the best professional talents for business-leading corporate sources by our Proficient experts.</p>
+        </div>
+      </section>
+
+      {/* --- CTA Section --- */}
+      <section className="bg-primary-600 text-white text-center py-12 px-6 rounded-lg">
+        <h2 className="text-3xl font-bold">Don’t just find. Be found.</h2>
+        <p className="mt-2 max-w-2xl mx-auto">Put your CV in front of great employers. We are working on a continuous basis from moulding students to become Professionals to meet client’s requirements.</p>
+        <Link 
+          to="/profile"
+          className="mt-6 inline-block bg-white text-primary-600 font-bold py-2 px-6 rounded-full hover:bg-gray-100 transition duration-300">
+          Upload Your Resume
+        </Link>
+      </section>
+
+    </div>
+  );
+}
+
+export default About;

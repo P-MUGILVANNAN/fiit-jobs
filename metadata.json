@@ -1,0 +1,5 @@
+{
+  "name": "FIIT Jobs Portal",
+  "description": "A comprehensive job portal for students and professionals to search, apply for, and track job applications. Features include user authentication, detailed job listings, application tracking, and profile management.",
+  "requestFramePermissions": []
+}
