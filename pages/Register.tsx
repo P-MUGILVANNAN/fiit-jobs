@@ -1,14 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import Spinner from '../components/Spinner';
 import Alert from '../components/Alert';
-
-declare global {
-  interface Window {
-    google: any;
-  }
-}
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { app } from "../services/firebase"; // make sure firebase.ts exists
 
 function Register(): React.JSX.Element {
   const [name, setName] = useState('');
@@ -16,17 +12,18 @@ function Register(): React.JSX.Element {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const auth = useAuth();
   const navigate = useNavigate();
   const googleButtonRef = useRef<HTMLDivElement>(null);
 
+  // 🔹 Register with backend
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      await auth.register(name, email, password);
+      await auth.register(name, email, password, "jobseeker");
       navigate('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred.');
@@ -35,31 +32,28 @@ function Register(): React.JSX.Element {
     }
   };
 
-  const handleGoogleSignIn = useCallback(async (response: any) => {
+  // 🔹 Google sign-in with Firebase
+  const handleGoogleSignIn = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
-        await auth.googleLogin(response.credential);
-        navigate('/', { replace: true });
+      const authFirebase = getAuth(app);
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(authFirebase, provider);
+
+      // Get Firebase ID token
+      const idToken = await result.user.getIdToken();
+
+      // Call backend API with token
+      await auth.googleLogin(idToken);
+
+      navigate('/', { replace: true });
     } catch (err) {
-        setError(err instanceof Error ? err.message : 'Google Sign-Up failed.');
+      setError(err instanceof Error ? err.message : 'Google Sign-Up failed.');
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   }, [auth, navigate]);
-
-  useEffect(() => {
-    if (window.google && googleButtonRef.current) {
-        window.google.accounts.id.initialize({
-            client_id: 'YOUR_GOOGLE_CLIENT_ID_HERE', // IMPORTANT: Replace with your actual Google Client ID
-            callback: handleGoogleSignIn,
-        });
-        window.google.accounts.id.renderButton(
-            googleButtonRef.current,
-            { theme: "outline", size: "large", type: "standard", text: "signup_with", width: "100%" }
-        );
-    }
-  }, [handleGoogleSignIn]);
 
   return (
     <div className="max-w-md mx-auto mt-10">
@@ -93,7 +87,7 @@ function Register(): React.JSX.Element {
             />
           </div>
           <div>
-            <label htmlFor="password"  className="block text-sm font-medium text-gray-700">Password</label>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
             <input
               id="password"
               name="password"
@@ -117,17 +111,24 @@ function Register(): React.JSX.Element {
         </form>
 
         <div className="mt-6 relative">
-            <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                <div className="w-full border-t border-gray-300" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or continue with</span>
-            </div>
+          <div className="absolute inset-0 flex items-center" aria-hidden="true">
+            <div className="w-full border-t border-gray-300" />
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-white text-gray-500">Or continue with</span>
+          </div>
         </div>
         <div className="mt-6">
-            <div ref={googleButtonRef} className="flex justify-center"></div>
+          {/* Google Sign-in button */}
+          <button
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+            className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:bg-gray-100"
+          >
+            {loading ? <Spinner /> : 'Sign up with Google'}
+          </button>
         </div>
-        
+
         <p className="mt-4 text-center text-sm text-gray-600">
           Already have an account?{' '}
           <Link to="/login" className="font-medium text-primary-600 hover:text-primary-500">
