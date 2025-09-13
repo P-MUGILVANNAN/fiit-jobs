@@ -1,6 +1,12 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from "react";
 import { User } from "../types";
-import { getUserProfile, loginUser, googleAuth, registerUser } from "../services/api";
+import { 
+  getUserProfile, 
+  loginUser, 
+  googleAuth, 
+  sendOtpApi, 
+  verifyOtpApi 
+} from "../services/api";
 
 interface AuthContextType {
   user: User | null;
@@ -9,7 +15,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (email: string, pass: string) => Promise<void>;
   googleLogin: (idToken: string) => Promise<void>;
-  register: (name: string, email: string, pass: string, role?: string) => Promise<void>;
+  sendOtp: (data: { name: string; email: string; password: string; }) => Promise<void>;
+  verifyOtp: (data: { email: string; otp: string }) => Promise<void>;
   logout: () => void;
   fetchUser: () => Promise<void>;
 }
@@ -50,7 +57,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): React.JSX.E
       setToken(newToken);
       setUser(newUser);
     } catch (error) {
-      throw error; // let UI handle the error
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -70,10 +77,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }): React.JSX.E
     }
   };
 
-  const register = async (name: string, email: string, pass: string, role: string = "jobseeker") => {
+  // 🔹 OTP Registration
+  const sendOtp = async (data: { name: string; email: string; password: string; }) => {
     try {
       setLoading(true);
-      const { token: newToken, user: newUser } = await registerUser(name, email, pass, role);
+      await sendOtpApi(data); // API call to send OTP
+    } catch (error) {
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const verifyOtp = async (data: { email: string; otp: string }) => {
+    try {
+      setLoading(true);
+      const { token: newToken, user: newUser } = await verifyOtpApi(data); // API call to verify OTP & create user
       localStorage.setItem("token", newToken);
       setToken(newToken);
       setUser(newUser);
@@ -101,7 +120,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }): React.JSX.E
         isAuthenticated,
         login,
         googleLogin,
-        register,
+        sendOtp,
+        verifyOtp,
         logout,
         fetchUser,
       }}
@@ -113,8 +133,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }): React.JSX.E
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
   return context;
 };

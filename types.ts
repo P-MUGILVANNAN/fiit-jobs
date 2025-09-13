@@ -46,14 +46,14 @@ export interface User {
 }
 
 export interface Job {
-  id: string;
+  _id: string;
   title: string;
   company: string;
-  logo: string;
+  companyImage: string;
   location: string;
   description: string;
   skills: string[];
-  postedDate: string;
+  createdAt: string;
   jobType: JobType;
   experienceLevel: ExperienceLevel;
 }

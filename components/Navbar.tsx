@@ -35,7 +35,7 @@ function Navbar(): React.JSX.Element {
           {/* --- Section 1: Logo --- */}
           <div className="flex-shrink-0">
             <Link to="/" className="text-2xl font-bold text-primary-700">
-              FIIT Jobs
+              FIIT JOBS
             </Link>
           </div>
 

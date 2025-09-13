@@ -7,7 +7,7 @@ function Footer(): React.JSX.Element {
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-lg font-bold text-primary-700 mb-4">FIIT Jobs Portal</h3>
+            <h3 className="text-lg font-bold text-primary-700 mb-4">FIIT JOBS</h3>
             <p className="text-gray-500">Your one-stop destination for finding the perfect job and advancing your career.</p>
           </div>
           <div>
@@ -26,7 +26,7 @@ function Footer(): React.JSX.Element {
           </div>
         </div>
         <div className="mt-8 border-t border-gray-200 pt-4 text-center text-gray-500">
-          <p>&copy; {new Date().getFullYear()} FIIT Jobs Portal. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} FIIT JOBS. All rights reserved.</p>
         </div>
       </div>
     </footer>

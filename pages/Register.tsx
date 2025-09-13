@@ -1,114 +1,148 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { useAuth } from '../context/AuthContext';
+import React, { useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import Spinner from '../components/Spinner';
 import Alert from '../components/Alert';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { app } from "../services/firebase"; // make sure firebase.ts exists
+import { app } from "../services/firebase";
 
 function Register(): React.JSX.Element {
+  const [step, setStep] = useState<1 | 2>(1); // Step 1: input, Step 2: OTP
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loadingOtp, setLoadingOtp] = useState(false);
+  const [loadingGoogle, setLoadingGoogle] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
 
   const auth = useAuth();
   const navigate = useNavigate();
-  const googleButtonRef = useRef<HTMLDivElement>(null);
 
-  // 🔹 Register with backend
-  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
+  // 🔹 Step 1: Send OTP
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
+    setLoadingOtp(true);
     try {
-      await auth.register(name, email, password, "jobseeker");
-      navigate('/');
+      await auth.sendOtp({ name, email, password }); // role handled on backend
+      setOtpSent(true);
+      setStep(2);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+      setError(err instanceof Error ? err.message : 'Failed to send OTP');
     } finally {
-      setLoading(false);
+      setLoadingOtp(false);
     }
   };
 
-  // 🔹 Google sign-in with Firebase
-  const handleGoogleSignIn = useCallback(async () => {
-    setLoading(true);
+  // 🔹 Step 2: Verify OTP & Register
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
     setError('');
+    setLoadingOtp(true);
+    try {
+      await auth.verifyOtp({ email, otp });
+      navigate('/', { replace: true });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'OTP verification failed');
+    } finally {
+      setLoadingOtp(false);
+    }
+  };
+
+  // 🔹 Google Sign-in
+  const handleGoogleSignIn = useCallback(async () => {
+    setError('');
+    setLoadingGoogle(true);
     try {
       const authFirebase = getAuth(app);
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(authFirebase, provider);
-
-      // Get Firebase ID token
       const idToken = await result.user.getIdToken();
-
-      // Call backend API with token
       await auth.googleLogin(idToken);
-
       navigate('/', { replace: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Google Sign-Up failed.');
+      setError(err instanceof Error ? err.message : 'Google Sign-In failed');
     } finally {
-      setLoading(false);
+      setLoadingGoogle(false);
     }
   }, [auth, navigate]);
 
   return (
-    <div className="max-w-md mx-auto mt-10">
-      <div className="bg-white p-8 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">Create your Account</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="bg-white p-10 rounded-xl shadow-lg max-w-md w-full">
+        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
+          {step === 1 ? 'Create your Account' : 'Verify OTP'}
+        </h2>
+
         {error && <Alert type="error" message={error} onClose={() => setError('')} />}
-        <form onSubmit={handleSubmit} className="space-y-6 mt-4">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Full Name</label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
-            />
-          </div>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 transition-colors"
-            />
-          </div>
-          <div>
+
+        {step === 1 ? (
+          <form onSubmit={handleSendOtp} className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Full Name</label>
+              <input
+                type="text"
+                required
+                value={name}
+                onChange={e => setName(e.target.value)}
+                className="mt-1 w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-primary-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Email</label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                className="mt-1 w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-primary-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Password</label>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className="mt-1 w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-primary-500"
+              />
+            </div>
+
             <button
               type="submit"
-              disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:bg-primary-300"
+              disabled={loadingOtp}
+              className="w-full py-2 px-4 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:bg-primary-300 flex justify-center"
             >
-              {loading ? <Spinner /> : 'Sign Up'}
+              {loadingOtp ? <Spinner /> : 'Send OTP'}
             </button>
-          </div>
-        </form>
+          </form>
+        ) : (
+          <form onSubmit={handleVerifyOtp} className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Enter OTP</label>
+              <input
+                type="text"
+                required
+                value={otp}
+                onChange={e => setOtp(e.target.value)}
+                className="mt-1 w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-primary-500"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loadingOtp}
+              className="w-full py-2 px-4 bg-primary-600 text-white rounded-md hover:bg-primary-700 disabled:bg-primary-300 flex justify-center"
+            >
+              {loadingOtp ? <Spinner /> : 'Verify & Register'}
+            </button>
+          </form>
+        )}
 
         <div className="mt-6 relative">
           <div className="absolute inset-0 flex items-center" aria-hidden="true">
@@ -118,16 +152,14 @@ function Register(): React.JSX.Element {
             <span className="px-2 bg-white text-gray-500">Or continue with</span>
           </div>
         </div>
-        <div className="mt-6">
-          {/* Google Sign-in button */}
-          <button
-            onClick={handleGoogleSignIn}
-            disabled={loading}
-            className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:bg-gray-100"
-          >
-            {loading ? <Spinner /> : 'Sign up with Google'}
-          </button>
-        </div>
+
+        <button
+          onClick={handleGoogleSignIn}
+          disabled={loadingGoogle}
+          className="w-full mt-6 py-2 px-4 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:bg-gray-100 flex justify-center"
+        >
+          {loadingGoogle ? <Spinner /> : 'Sign up with Google'}
+        </button>
 
         <p className="mt-4 text-center text-sm text-gray-600">
           Already have an account?{' '}

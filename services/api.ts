@@ -26,7 +26,6 @@ export const loginUser = async (
     const { token, _id, ...userData } = response.data;
     const user: User = { id: _id, ...userData, skills: userData.skills || [] };
 
-    // Save token + user to localStorage
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(user));
 
@@ -37,32 +36,39 @@ export const loginUser = async (
 };
 
 /**
- * 🔹 Register new user
+ * 🔹 Send OTP (Step 1)
  */
-export const registerUser = async (
-  name: string,
-  email: string,
-  pass: string,
-  role: string = "jobseeker"
-): Promise<{ token: string; user: User }> => {
+export const sendOtpApi = async (data: {
+  name: string;
+  email: string;
+  password: string;
+}): Promise<void> => {
   try {
-    const response = await axios.post(`${API_BASE}/auth/register`, {
-      name,
-      email,
-      password: pass,
-      role,
-    });
+    await axios.post(`${API_BASE}/auth/send-otp`, data);
+  } catch (error) {
+    throw handleApiError(error, "Failed to send OTP");
+  }
+};
+
+/**
+ * 🔹 Verify OTP & Register (Step 2)
+ */
+export const verifyOtpApi = async (data: {
+  email: string;
+  otp: string;
+}): Promise<{ token: string; user: User }> => {
+  try {
+    const response = await axios.post(`${API_BASE}/auth/verify-otp`, data);
 
     const { token, _id, ...userData } = response.data;
-    const user: User = { id: _id, ...userData, skills: [] };
+    const user: User = { id: _id, ...userData, skills: userData.skills || [] };
 
-    // Save token + user to localStorage
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(user));
 
     return { token, user };
   } catch (error) {
-    throw handleApiError(error, "Registration failed");
+    throw handleApiError(error, "OTP verification failed");
   }
 };
 
@@ -78,7 +84,6 @@ export const googleAuth = async (
     const { token, _id, ...userData } = response.data;
     const user: User = { id: _id, ...userData, skills: userData.skills || [] };
 
-    // Save token + user to localStorage
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(user));
 
@@ -89,7 +94,7 @@ export const googleAuth = async (
 };
 
 /**
- * 🔹 Get logged-in user profile (from localStorage, since no /auth/me endpoint)
+ * 🔹 Get logged-in user profile
  */
 export const getUserProfile = async (): Promise<User> => {
   try {
@@ -109,13 +114,8 @@ export const getUserProfile = async (): Promise<User> => {
 export const fetchJobs = async (): Promise<Job[]> => {
   try {
     const response = await axios.get(`${API_BASE}/jobs`);
-    // Ensure always returning an array
-    if (Array.isArray(response.data)) {
-      return response.data;
-    }
-    if (response.data.jobs && Array.isArray(response.data.jobs)) {
-      return response.data.jobs;
-    }
+    if (Array.isArray(response.data)) return response.data;
+    if (response.data.jobs && Array.isArray(response.data.jobs)) return response.data.jobs;
     throw new Error("Jobs API did not return a valid array");
   } catch (error) {
     throw handleApiError(error, "Failed to fetch jobs");

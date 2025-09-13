@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 
 import Home from './pages/Home';
@@ -18,7 +18,7 @@ import About from './pages/About';
 function App(): React.JSX.Element {
   return (
     <AuthProvider>
-      <HashRouter>
+      <BrowserRouter>
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -44,7 +44,7 @@ function App(): React.JSX.Element {
             } />
           </Routes>
         </Layout>
-      </HashRouter>
+      </BrowserRouter>
     </AuthProvider>
   );
 }
