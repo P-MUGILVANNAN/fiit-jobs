@@ -1,6 +1,6 @@
 // src/firebase.ts
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+// import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -16,4 +16,4 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 
 // Analytics (only in browser)
-export const analytics = typeof window !== "undefined" ? getAnalytics(app) : null;
+// export const analytics = typeof window !== "undefined" ? getAnalytics(app) : null;

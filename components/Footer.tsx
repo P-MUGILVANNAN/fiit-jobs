@@ -21,7 +21,7 @@ function Footer(): React.JSX.Element {
           </div>
           <div>
             <h3 className="text-lg font-bold text-gray-800 mb-4">Contact Us</h3>
-            <p className="text-gray-500">123 Tech Avenue, Silicon Valley, CA</p>
+            <p className="text-gray-500">kamarajar nagar,avadi</p>
             <p className="text-gray-500">Email: support@fiitjobs.com</p>
           </div>
         </div>
