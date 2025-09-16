@@ -1,9 +1,11 @@
-// src/services/api.ts
 import axios from "axios";
 import { User, Job } from "../types";
 
 const API_BASE = "https://jobs-backend-z4z9.onrender.com/api";
 
+/**
+ * 🔹 Centralized error handler
+ */
 const handleApiError = (error: any, defaultMessage: string): Error => {
   const message =
     error.response?.data?.message || error.message || defaultMessage;
@@ -98,13 +100,70 @@ export const googleAuth = async (
  */
 export const getUserProfile = async (): Promise<User> => {
   try {
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) {
-      throw new Error("No user found in local storage");
-    }
-    return JSON.parse(storedUser) as User;
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("No authentication token found");
+
+    const response = await axios.get(`${API_BASE}/user/profile`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const data = response.data.user || response.data;
+
+    const { _id, ...userData } = data;
+    const user: User = { id: _id, ...userData, skills: userData.skills || [] };
+
+    localStorage.setItem("user", JSON.stringify(user));
+    return user;
   } catch (error) {
     throw handleApiError(error, "Failed to fetch user profile");
+  }
+};
+
+/**
+ * 🔹 Update user profile
+ * Supports text fields + files (profileImage, coverImage, resume)
+ */
+export const updateUserProfile = async (
+  data: Partial<User> & {
+    profileImage?: File;
+    coverImage?: File;
+    resume?: File;
+  }
+): Promise<User> => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("No authentication token found");
+
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        if (Array.isArray(value)) {
+          value.forEach((item) => formData.append(key, item));
+        } else {
+          formData.append(key, value as any);
+        }
+      }
+    });
+
+    const response = await axios.put(`${API_BASE}/user/update`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    const updated = response.data.user || response.data;
+    const { _id, ...userData } = updated;
+    const updatedUser: User = {
+      id: _id,
+      ...userData,
+      skills: userData.skills || [],
+    };
+
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    return updatedUser;
+  } catch (error) {
+    throw handleApiError(error, "Failed to update profile");
   }
 };
 
@@ -115,18 +174,17 @@ export const fetchJobs = async (): Promise<Job[]> => {
   try {
     const response = await axios.get(`${API_BASE}/jobs`);
     if (Array.isArray(response.data)) return response.data;
-    if (response.data.jobs && Array.isArray(response.data.jobs)) return response.data.jobs;
+    if (response.data.jobs && Array.isArray(response.data.jobs))
+      return response.data.jobs;
     throw new Error("Jobs API did not return a valid array");
   } catch (error) {
     throw handleApiError(error, "Failed to fetch jobs");
   }
 };
 
-
 /**
-* 🔹Fetch full job details of ID 
-*/
-
+ * 🔹 Fetch full job details by ID
+ */
 export const fetchJobById = async (id: string): Promise<Job> => {
   try {
     const response = await axios.get(`${API_BASE}/jobs/${id}`);
@@ -135,4 +193,3 @@ export const fetchJobById = async (id: string): Promise<Job> => {
     throw handleApiError(error, "Failed to fetch job details");
   }
 };
-
