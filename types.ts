@@ -33,7 +33,7 @@ export interface User {
   name: string;
   email: string;
   skills: string[];
-  role?: 'jobseeker' | 'employer' | 'admin';
+  role?: 'user' | 'employer' | 'admin';
   provider?: 'local' | 'google';
   profileImage?: string; // URL or base64 string
   about?: string;
