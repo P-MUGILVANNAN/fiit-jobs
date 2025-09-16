@@ -121,3 +121,18 @@ export const fetchJobs = async (): Promise<Job[]> => {
     throw handleApiError(error, "Failed to fetch jobs");
   }
 };
+
+
+/**
+* 🔹Fetch full job details of ID 
+*/
+
+export const fetchJobById = async (id: string): Promise<Job> => {
+  try {
+    const response = await axios.get(`${API_BASE}/jobs/${id}`);
+    return response.data as Job;
+  } catch (error) {
+    throw handleApiError(error, "Failed to fetch job details");
+  }
+};
+
