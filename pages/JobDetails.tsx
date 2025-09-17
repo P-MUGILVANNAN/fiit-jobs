@@ -9,7 +9,7 @@ import { MapPin, Calendar, DollarSign, Briefcase, Award, Tag } from "lucide-reac
 
 function JobDetails(): React.JSX.Element {
   const { id } = useParams<{ id: string }>();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, isProfileComplete } = useAuth();
 
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
@@ -102,12 +102,12 @@ function JobDetails(): React.JSX.Element {
         <div className="flex flex-col md:flex-row items-start gap-6">
           <img
             src={job.companyImage}
-            alt={`${job.company} logo`}
+            alt={`${job.companyName} logo`}
             className="w-28 h-28 object-contain rounded-lg border p-2 shadow-sm"
           />
           <div className="flex-1">
             <h1 className="text-3xl font-bold text-gray-900">{job.title}</h1>
-            <p className="text-xl text-gray-700 mt-1">{job.company}</p>
+            <p className="text-xl text-gray-700 mt-1">{job.companyName}</p>
             
             <div className="flex flex-wrap items-center gap-4 mt-4 text-gray-600">
               <div className="flex items-center">
@@ -136,25 +136,42 @@ function JobDetails(): React.JSX.Element {
           <div className="w-full md:w-auto flex flex-col gap-3 mt-4 md:mt-0">
             {isAuthenticated ? (
               <>
-                {applyStatus && (
-                  <Alert
-                    type={applyStatus.type}
-                    message={applyStatus.message}
-                    onClose={() => setApplyStatus(null)}
-                    className="mb-2"
-                  />
+                {!isProfileComplete ? (
+                  <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
+                    <p className="text-sm text-yellow-800 text-center">
+                      Please{" "}
+                      <Link
+                        to="/profile"
+                        className="text-primary-600 font-bold hover:underline"
+                      >
+                        complete your profile
+                      </Link>{" "}
+                      before applying.
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    {applyStatus && (
+                      <Alert
+                        type={applyStatus.type}
+                        message={applyStatus.message}
+                        onClose={() => setApplyStatus(null)}
+                        className="mb-2"
+                      />
+                    )}
+                    <button
+                      onClick={handleApply}
+                      disabled={isApplying || applyStatus?.type === "success"}
+                      className="w-full md:w-40 bg-primary-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-primary-700 transition duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
+                    >
+                      {isApplying
+                        ? <><Spinner size="sm" className="mr-2" /> Applying...</>
+                        : applyStatus?.type === "success"
+                        ? "Applied ✓"
+                        : "Apply Now"}
+                    </button>
+                  </>
                 )}
-                <button
-                  onClick={handleApply}
-                  disabled={isApplying || applyStatus?.type === "success"}
-                  className="w-full md:w-40 bg-primary-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-primary-700 transition duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
-                >
-                  {isApplying
-                    ? <><Spinner size="sm" className="mr-2" /> Applying...</>
-                    : applyStatus?.type === "success"
-                    ? "Applied ✓"
-                    : "Apply Now"}
-                </button>
               </>
             ) : (
               <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-100">

@@ -13,6 +13,7 @@ interface AuthContextType {
   token: string | null;
   loading: boolean;
   isAuthenticated: boolean;
+  isProfileComplete: boolean;
   login: (email: string, pass: string) => Promise<void>;
   googleLogin: (idToken: string) => Promise<void>;
   sendOtp: (data: { name: string; email: string; password: string; }) => Promise<void>;
@@ -77,11 +78,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }): React.JSX.E
     }
   };
 
-  // 🔹 OTP Registration
   const sendOtp = async (data: { name: string; email: string; password: string; }) => {
     try {
       setLoading(true);
-      await sendOtpApi(data); // API call to send OTP
+      await sendOtpApi(data);
     } catch (error) {
       throw error;
     } finally {
@@ -92,7 +92,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): React.JSX.E
   const verifyOtp = async (data: { email: string; otp: string }) => {
     try {
       setLoading(true);
-      const { token: newToken, user: newUser } = await verifyOtpApi(data); // API call to verify OTP & create user
+      const { token: newToken, user: newUser } = await verifyOtpApi(data);
       localStorage.setItem("token", newToken);
       setToken(newToken);
       setUser(newUser);
@@ -111,6 +111,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }): React.JSX.E
 
   const isAuthenticated = !!token && !!user;
 
+  // 🔹 Only frontend check → mark profile as complete if these exist
+  const isProfileComplete =
+    !!user?.name &&
+    !!user?.email &&
+    !!user?.skills?.length &&
+    !!user?.phone &&
+    !!user?.location &&
+    !!user?.education?.length &&
+    !!user?.resume;
+
   return (
     <AuthContext.Provider
       value={{
@@ -118,6 +128,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }): React.JSX.E
         token,
         loading,
         isAuthenticated,
+        isProfileComplete,
         login,
         googleLogin,
         sendOtp,
