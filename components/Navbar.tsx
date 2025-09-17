@@ -41,15 +41,14 @@ function Navbar(): React.JSX.Element {
             </Link>
           </div>
 
-          {/* --- Desktop Nav Links --- */}
-          <div className="hidden md:block">
+          {/* --- Desktop Nav Links (hidden on mobile/tablet) --- */}
+          <div className="hidden lg:block">
             <div className="flex items-baseline space-x-6"> 
               <NavLink to="/" className={navLinkClasses}><Home size={18}/> Home</NavLink>
               <NavLink to="/jobs" className={navLinkClasses}><Briefcase size={18}/> Jobs</NavLink>
               <NavLink to="/about" className={navLinkClasses}><Info size={18}/> About Us</NavLink>
               {isAuthenticated && (
                 <>
-                  <NavLink to="/alerts" className={navLinkClasses}><Bell size={18}/> Job Alerts</NavLink>
                   <NavLink to="/applications" className={navLinkClasses}><FileText size={18}/> My Applications</NavLink>
                   <NavLink to="/profile" className={navLinkClasses}><User size={18}/> Profile</NavLink>
                 </>
@@ -57,8 +56,8 @@ function Navbar(): React.JSX.Element {
             </div>
           </div>
 
-          {/* --- Desktop Auth Buttons --- */}
-          <div className="hidden md:block">
+          {/* --- Desktop Auth Buttons (hidden on mobile/tablet) --- */}
+          <div className="hidden lg:block">
             {isAuthenticated ? (
                <div className="flex items-center space-x-4">
                 <span className="text-gray-600 text-sm">Welcome, {user?.name}</span>
@@ -77,8 +76,8 @@ function Navbar(): React.JSX.Element {
             )}
           </div>
 
-          {/* --- Mobile Menu Toggle --- */}
-          <div className="-mr-2 flex md:hidden">
+          {/* --- Mobile Menu Toggle (visible on mobile/tablet) --- */}
+          <div className="-mr-2 flex lg:hidden">
             <button 
               onClick={() => setIsOpen(!isOpen)} 
               type="button" 
@@ -100,9 +99,9 @@ function Navbar(): React.JSX.Element {
         </div>
       </div>
 
-      {/* --- Mobile Menu Dropdown --- */}
+      {/* --- Mobile Menu Dropdown (visible on mobile/tablet) --- */}
       <div 
-        className={`transition-all duration-300 ease-in-out overflow-hidden md:hidden ${isOpen ? 'max-h-96' : 'max-h-0'}`}
+        className={`transition-all duration-300 ease-in-out overflow-hidden lg:hidden ${isOpen ? 'max-h-96' : 'max-h-0'}`}
         id="mobile-menu"
       >
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
@@ -111,7 +110,6 @@ function Navbar(): React.JSX.Element {
             <NavLink to="/about" className={mobileNavLinkClasses} onClick={()=>setIsOpen(false)}><Info size={18}/> About Us</NavLink>
             {isAuthenticated && (
             <>
-                <NavLink to="/alerts" className={mobileNavLinkClasses} onClick={()=>setIsOpen(false)}><Bell size={18}/> Job Alerts</NavLink>
                 <NavLink to="/applications" className={mobileNavLinkClasses} onClick={()=>setIsOpen(false)}><FileText size={18}/> My Applications</NavLink>
                 <NavLink to="/profile" className={mobileNavLinkClasses} onClick={()=>setIsOpen(false)}><User size={18}/> Profile</NavLink>
             </>
@@ -119,9 +117,10 @@ function Navbar(): React.JSX.Element {
         </div>
         <div className="pt-4 pb-3 border-t border-gray-200">
             {isAuthenticated ? (
-                <div className="px-2">
-                    <div className="text-base font-medium leading-none text-gray-800 px-3">{user?.name}</div>
-                    <div className="text-sm font-medium leading-none text-gray-500 mb-2 px-3">{user?.email}</div>
+                <div className="px-3">
+                    <div className="mb-2">
+                        <div className="text-base font-medium leading-none text-gray-800">{user?.name}</div>
+                    </div>
                     <button 
                       onClick={()=>{handleLogout(); setIsOpen(false);}} 
                       className="mt-2 w-full text-left bg-red-500 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-red-600 flex items-center gap-2"
@@ -130,7 +129,7 @@ function Navbar(): React.JSX.Element {
                     </button>
                 </div>
             ) : (
-                <div className="px-2 space-y-2">
+                <div className="px-3 space-y-2">
                     <Link to="/login" onClick={()=>setIsOpen(false)} className="block text-gray-600 hover:text-primary-700 hover:bg-primary-50 px-3 py-2 rounded-md text-base font-medium flex items-center gap-2"><LogIn size={16}/> Login</Link>
                     <Link to="/register" onClick={()=>setIsOpen(false)} className="block bg-primary-600 text-white px-3 py-2 rounded-md text-base font-medium hover:bg-primary-700 flex items-center gap-2"><UserPlus size={16}/> Register</Link>
                 </div>

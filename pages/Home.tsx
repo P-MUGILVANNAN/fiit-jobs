@@ -73,16 +73,6 @@ function Home(): React.JSX.Element {
         )}
       </section>
 
-      {/* Job Alert Section */}
-      <section className="bg-primary-600 text-white text-center py-12 px-6 rounded-lg">
-        <h2 className="text-3xl font-bold">Create a Job Alert</h2>
-        <p className="mt-2">Be the first to know about new jobs that match your criteria.</p>
-        <button 
-          onClick={() => navigate('/alerts')}
-          className="mt-6 bg-white text-primary-600 font-bold py-2 px-6 rounded-full hover:bg-gray-100 transition duration-300">
-          Create Alert
-        </button>
-      </section>
     </div>
   );
 }

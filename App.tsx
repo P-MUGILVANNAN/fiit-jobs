@@ -12,7 +12,6 @@ import Applications from './pages/Applications';
 import Profile from './pages/Profile';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
-import JobAlerts from './pages/JobAlerts';
 import About from './pages/About';
 
 function App(): React.JSX.Element {
@@ -27,11 +26,6 @@ function App(): React.JSX.Element {
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/jobs/:id" element={<JobDetails />} />
             <Route path="/about" element={<About />} />
-            <Route path="/alerts" element={
-              <ProtectedRoute>
-                <JobAlerts />
-              </ProtectedRoute>
-            } />
             <Route path="/applications" element={
               <ProtectedRoute>
                 <Applications />
