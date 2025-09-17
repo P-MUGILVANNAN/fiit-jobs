@@ -1,5 +1,5 @@
 import axios from "axios";
-import { User, Job } from "../types";
+import { User, Job, JobResponse } from "../types";
 
 const API_BASE = "https://jobs-backend-z4z9.onrender.com/api";
 
@@ -169,17 +169,36 @@ export const updateUserProfile = async (
 };
 
 /**
- * 🔹 Fetch all jobs
+ * 🔹 Fetch jobs with filters & pagination
  */
-export const fetchJobs = async (): Promise<Job[]> => {
+export const fetchJobs = async (params: {
+  keyword?: string;
+  location?: string;
+  jobType?: string;
+  experience?: string;
+  qualification?: string;
+  category?: string;
+  page?: number;
+  limit?: number;
+} = {}): Promise<JobResponse> => {
   try {
-    const response = await axios.get(`${API_BASE}/jobs`);
-    if (Array.isArray(response.data)) return response.data;
-    if (response.data.jobs && Array.isArray(response.data.jobs))
-      return response.data.jobs;
-    throw new Error("Jobs API did not return a valid array");
+    const response = await axios.get(`${API_BASE}/jobs`, { params });
+
+    // ✅ Ensure response matches JobResponse
+    if (response.data && Array.isArray(response.data.jobs)) {
+      return {
+        success: response.data.success ?? true,
+        totalJobs: response.data.totalJobs ?? response.data.jobs.length,
+        page: response.data.page ?? 1,
+        totalPages: response.data.totalPages ?? 1,
+        jobs: response.data.jobs,
+      };
+    }
+
+    throw new Error("Jobs API did not return a valid response");
   } catch (error) {
-    throw handleApiError(error, "Failed to fetch jobs");
+    console.error(error);
+    throw new Error("Failed to fetch jobs");
   }
 };
 

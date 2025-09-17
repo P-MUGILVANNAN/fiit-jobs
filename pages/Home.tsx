@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import SearchBar from '../components/SearchBar';
-import CategoryCard from '../components/CategoryCard';
 import JobCard from '../components/JobCard';
 import Spinner from '../components/Spinner';
 import * as api from '../services/api';
@@ -136,30 +135,23 @@ function Home(): React.JSX.Element {
   const [recommendedJobs, setRecommendedJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchRecommendedJobs = async () => {
-      try {
-        const jobs = await api.fetchJobs();
-        setRecommendedJobs(jobs.slice(0, 4)); // Show first 4 as "recommended"
-      } catch (error) {
-        console.error("Failed to fetch jobs", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRecommendedJobs();
-  }, []);
+useEffect(() => {
+  const fetchRecommendedJobs = async () => {
+    try {
+      const response = await api.fetchJobs();
+      setRecommendedJobs(response.jobs.slice(0, 4)); // ✅ use response.jobs
+    } catch (error) {
+      console.error("Failed to fetch jobs", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchRecommendedJobs();
+}, []);
 
   const handleSearch = (keyword: string, location: string): void => {
     navigate(`/jobs?keyword=${encodeURIComponent(keyword)}&location=${encodeURIComponent(location)}`);
   };
-
-  const categories = [
-    { title: 'Engineering', icon: <EngineeringIcon /> },
-    { title: 'Sales', icon: <SalesIcon /> },
-    { title: 'IT', icon: <ITIcon /> },
-    { title: 'Design', icon: <DesignIcon /> },
-  ];
 
   return (
     <div className="space-y-16">
@@ -228,14 +220,6 @@ function Home(): React.JSX.Element {
         </div>
       </section>
 
-      {/* Categories Section */}
-      <section>
-        <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Browse by Category</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {categories.map(cat => <CategoryCard key={cat.title} title={cat.title} icon={cat.icon} />)}
-        </div>
-      </section>
-
       {/* Recommended Jobs Section */}
       <section>
         <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Recommended Jobs</h2>
@@ -246,6 +230,13 @@ function Home(): React.JSX.Element {
             {recommendedJobs.map(job => <JobCard key={job.id} job={job} />)}
           </div>
         )}
+        <div className="flex justify-center">
+            <Link to="/jobs">
+              <button className="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded-md mt-8">
+                View All Jobs
+              </button>
+            </Link>
+        </div>
       </section>
     </div>
   );

@@ -1,14 +1,21 @@
+// ================= Enums =================
+
 export enum JobType {
-  FullTime = 'Full-time',
-  PartTime = 'Part-time',
-  Contract = 'Contract',
+  FullTime = "Full-Time",
+  PartTime = "Part-Time",
+  Internship = "Internship",
+  Contract = "Contract",
 }
 
 export enum ExperienceLevel {
-  Entry = 'Entry Level',
-  Mid = 'Mid Level',
-  Senior = 'Senior Level',
+  Fresher = "Fresher",
+  ZeroToOne = "0-1 Years",
+  OneToThree = "1-3 Years",
+  ThreeToFive = "3-5 Years",
+  FivePlus = "5+ Years",
 }
+
+// ================= User Related =================
 
 export interface Education {
   id: string;
@@ -29,12 +36,12 @@ export interface Project {
 }
 
 export interface User {
-  id:string;
+  id: string;
   name: string;
   email: string;
   skills: string[];
-  role?: 'user' | 'employer' | 'admin';
-  provider?: 'local' | 'google';
+  role?: "user" | "employer" | "admin";
+  provider?: "local" | "google";
   profileImage?: string; // URL or base64 string
   about?: string;
   phone?: string;
@@ -45,23 +52,36 @@ export interface User {
   resume?: string; // filename or path
 }
 
+// ================= Job Related =================
+
 export interface Job {
   _id: string;
+  companyName: string;
   title: string;
-  company: string;
-  companyImage: string;
-  location: string;
   description: string;
   skills: string[];
-  createdAt: string;
+  qualification: string;
+  category: string;
+  location: string;
+  salary: number;
   jobType: JobType;
-  experienceLevel: ExperienceLevel;
+  experience: ExperienceLevel;
+  companyImage?: string;
+  createdBy?: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  createdAt: string;
+  updatedAt?: string;
 }
 
+// ================= Application Related =================
+
 export enum ApplicationStatus {
-  Pending = 'Pending',
-  Selected = 'Selected',
-  Rejected = 'Rejected',
+  Pending = "Pending",
+  Selected = "Selected",
+  Rejected = "Rejected",
 }
 
 export interface Application {
@@ -70,8 +90,12 @@ export interface Application {
   status: ApplicationStatus;
 }
 
-export interface JobAlert {
-  id: string;
-  keyword: string;
-  location: string;
+// ================= API Response Types =================
+
+export interface JobResponse {
+  success: boolean;
+  totalJobs: number;
+  page: number;
+  totalPages: number;
+  jobs: Job[];
 }
