@@ -10,49 +10,40 @@ import { Job } from '../types';
 // Company logos for the slider
 const companyLogos = [
   // TCS
-  "https://1000logos.net/wp-content/uploads/2021/06/TCS-Logo.png",
+  "https://upload.wikimedia.org/wikipedia/commons/0/0e/Tata_Consultancy_Services_old_logo.svg",
 
-  // Infosys (unchanged)
+  // Infosys
   "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Infosys_logo.svg/256px-Infosys_logo.svg.png",
 
   // Wipro
-  "https://1000logos.net/wp-content/uploads/2021/05/Wipro-logo.png",
+  "https://companieslogo.com/img/orig/WIT-1453b096.png?t",
 
   // HCL
-  "https://1000logos.net/wp-content/uploads/2021/06/HCL-Technologies-Logo.png",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/HCLTech-new-logo.svg/1200px-HCLTech-new-logo.svg.png",
 
   // Accenture
-  "https://1000logos.net/wp-content/uploads/2017/06/Accenture-Logo.png",
+  "https://upload.wikimedia.org/wikipedia/commons/c/cd/Accenture.svg",
 
   // Cognizant
-  "https://1000logos.net/wp-content/uploads/2021/06/Cognizant-logo.png",
+  "https://www.cognizantrcm.com/wp-content/uploads/Cognizant_Logo.png",
 
   // Capgemini
-  "https://1000logos.net/wp-content/uploads/2021/06/Capgemini-logo.png",
+  "https://companieslogo.com/img/orig/CAP.PA_BIG-cbc06f01.png?t",
 
-  // IBM (unchanged)
+  // IBM
   "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/IBM_logo.svg/256px-IBM_logo.svg.png",
 
   // Deloitte
-  "https://1000logos.net/wp-content/uploads/2021/04/Deloitte-logo.png",
-
-  // Ernst & Young (EY)
-  "https://1000logos.net/wp-content/uploads/2021/04/EY-logo.png",
-
-  // PwC
-  "https://1000logos.net/wp-content/uploads/2017/06/PWC-Logo.png",
-
-  // KPMG
-  "https://1000logos.net/wp-content/uploads/2017/06/KPMG-logo.png",
+  "https://www.pngmart.com/files/23/Deloitte-Logo-PNG-Picture.png",
 
   // Amazon
   "https://1000logos.net/wp-content/uploads/2016/10/Amazon-Logo.png",
 
   // Google
-  "https://1000logos.net/wp-content/uploads/2021/05/Google-logo.png",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/2560px-Google_2015_logo.svg.png",
 
   // Microsoft
-  "https://1000logos.net/wp-content/uploads/2021/04/Microsoft-logo.png",
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Microsoft_logo_%282012%29.svg/2560px-Microsoft_logo_%282012%29.svg.png",
 ];
 
 // Reusable component for the company logo slider
