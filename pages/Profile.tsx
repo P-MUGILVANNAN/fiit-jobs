@@ -23,73 +23,57 @@ const UserCircleIcon = () => (
 function Profile(): React.JSX.Element {
   const { user: authUser, loading: authLoading, fetchUser } = useAuth();
   const [formData, setFormData] = useState<Partial<User>>({});
+  const [education, setEducation] = useState<Education[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [skillsInput, setSkillsInput] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const profileImageRef = useRef<HTMLInputElement>(null);
+  const resumeRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (authUser) {
-      const experienceMap: Record<string, string> = {
-        '0-1 years': '0-1 years',
-        '2-4 years': '2-4 years',
-        '5+ years': '5+ years',
-      };
-
-      let normalizedExp = '';
-      if (authUser.experience) {
-        const exp = authUser.experience.toLowerCase().replace(/\s/g, ''); // remove spaces
-        if (exp.includes('0-1')) normalizedExp = '0-1 years';
-        else if (exp.includes('2-4')) normalizedExp = '2-4 years';
-        else if (exp.includes('5')) normalizedExp = '5+ years';
-      }
-
       setFormData({
-        ...authUser,
-        experience: normalizedExp,
+        name: authUser.name,
+        email: authUser.email,
         skills: authUser.skills || [],
-        education: (authUser.education || []).map(edu => ({
-          id: `edu_${Date.now()}_${Math.random()}`,
-          level: edu.level || '',
-          institution: edu.institution || '',
-          startYear: edu.startYear || '',
-          endYear: edu.endYear || '',
-          grade: edu.grade || '',
-        })),
-        projects: (authUser.projects || []).map(proj => ({
-          id: `proj_${Date.now()}_${Math.random()}`,
-          projectName: proj.projectName || '',
-          description: proj.description || '',
-          liveLink: proj.liveLink || '',
-          githubLink: proj.githubLink || '',
-        })),
+        experience: authUser.experience || '',
         about: authUser.about || '',
         location: authUser.location || '',
         phone: authUser.phone || '',
         resume: authUser.resume || '',
         profileImage: authUser.profileImage || '',
       });
+      setEducation(authUser.education || []);
+      setProjects(authUser.projects || []);
+      setProfileImageFile(null);
+      setResumeFile(null);
+      setSkillsInput(authUser.skills?.join(', ') || '');
     }
   }, [authUser]);
-
-
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSkillsChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const skillsArray = e.target.value.split(',').map(skill => skill.trim());
+    setSkillsInput(e.target.value);
+    const skillsArray = e.target.value.split(',').map(skill => skill.trim()).filter(skill => skill);
     setFormData({ ...formData, skills: skillsArray });
   };
 
   const handleResumeChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (e.target.files && e.target.files[0]) {
-      setFormData({ ...formData, resume: e.target.files[0] });
+      setResumeFile(e.target.files[0]);
     }
-  }
+  };
 
   const handleViewResume = () => {
-    if (formData.resume) {
-      const url = typeof formData.resume === 'string' ? formData.resume : URL.createObjectURL(formData.resume);
+    const url = resumeFile ? URL.createObjectURL(resumeFile) : formData.resume;
+    if (url) {
       window.open(`https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`, '_blank');
     }
   };
@@ -97,59 +81,63 @@ function Profile(): React.JSX.Element {
   const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      setProfileImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setFormData({ ...formData, profileImage: reader.result as string });
+        setFormData(prev => ({ ...prev, profileImage: reader.result as string }));
       };
       reader.readAsDataURL(file);
     }
   };
 
-  // --- Education Handlers ---
   const handleAddEducation = () => {
     const newEducation: Education = { id: `new_${Date.now()}`, level: '', institution: '', startYear: '', endYear: '', grade: '' };
-    setFormData(prev => ({ ...prev, education: [...(prev.education || []), newEducation] }));
+    setEducation(prev => [...prev, newEducation]);
   };
 
   const handleDeleteEducation = (id: string) => {
-    setFormData(prev => ({ ...prev, education: prev.education?.filter(edu => edu.id !== id) }));
+    setEducation(prev => prev.filter(edu => edu.id !== id));
   };
 
   const handleEducationChange = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      education: prev.education?.map(edu => edu.id === id ? { ...edu, [name]: value } : edu)
-    }));
+    setEducation(prev => prev.map(edu => edu.id === id ? { ...edu, [name]: value } : edu));
   };
 
-  // --- Project Handlers ---
   const handleAddProject = () => {
     const newProject: Project = { id: `new_${Date.now()}`, projectName: '', description: '', liveLink: '', githubLink: '' };
-    setFormData(prev => ({ ...prev, projects: [...(prev.projects || []), newProject] }));
+    setProjects(prev => [...prev, newProject]);
   };
 
   const handleDeleteProject = (id: string) => {
-    setFormData(prev => ({ ...prev, projects: prev.projects?.filter(proj => proj.id !== id) }));
+    setProjects(prev => prev.filter(proj => proj.id !== id));
   };
 
   const handleProjectChange = (id: string, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      projects: prev.projects?.map(proj => proj.id === id ? { ...proj, [name]: value } : proj)
-    }));
+    setProjects(prev => prev.map(proj => proj.id === id ? { ...proj, [name]: value } : proj));
   };
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     setLoading(true);
     setStatus(null);
+
     try {
-      await api.updateUserProfile(formData);
+      const payload = {
+        ...formData,
+        education: education.map(({ id, ...rest }) => rest), // Remove local 'id' for submission
+        projects: projects.map(({ id, ...rest }) => rest), // Remove local 'id' for submission
+        skills: formData.skills || [],
+        profileImage: profileImageFile,
+        resume: resumeFile,
+      };
+
+      await api.updateUserProfile(payload);
       await fetchUser();
       setStatus({ type: 'success', message: 'Profile updated successfully!' });
     } catch (error) {
+      console.error(error);
       setStatus({ type: 'error', message: 'Failed to update profile.' });
     } finally {
       setLoading(false);
@@ -192,10 +180,10 @@ function Profile(): React.JSX.Element {
               </div>
             </div>
             <div className="text-center md:text-left">
-              <button type="button" onClick={() => fileInputRef.current?.click()} className="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+              <button type="button" onClick={() => profileImageRef.current?.click()} className="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
                 Change Photo
               </button>
-              <input type="file" ref={fileInputRef} onChange={handleProfileImageChange} accept="image/*" className="hidden" />
+              <input type="file" ref={profileImageRef} onChange={handleProfileImageChange} accept="image/*" className="hidden" />
               <p className="mt-1 text-xs text-gray-500">JPG, GIF or PNG. 1MB max.</p>
             </div>
           </div>
@@ -223,7 +211,7 @@ function Profile(): React.JSX.Element {
             </div>
             <div>
               <label htmlFor="skills" className={labelClass}>Skills (comma-separated)</label>
-              <input type="text" name="skills" id="skills" value={formData.skills?.join(', ') || ''} onChange={handleSkillsChange} className={inputClass} />
+              <input type="text" name="skills" id="skills" value={skillsInput} onChange={handleSkillsChange} className={inputClass} />
             </div>
             <div>
               <label htmlFor="experience" className={labelClass}>Experience</label>
@@ -239,18 +227,16 @@ function Profile(): React.JSX.Element {
             <div className="md:col-span-2">
               <label htmlFor="resume" className={labelClass}>Resume</label>
               <div className="mt-1 flex items-center gap-2">
-                {/* File input is always hidden */}
                 <input
                   type="file"
                   name="resume"
                   id="resume"
                   onChange={handleResumeChange}
                   className="hidden"
-                  ref={fileInputRef}
+                  ref={resumeRef}
                 />
-
-                {/* If resume exists */}
-                {formData.resume ? (
+                
+                {(formData.resume || resumeFile) ? (
                   <div className="flex gap-2">
                     <button
                       type="button"
@@ -261,23 +247,16 @@ function Profile(): React.JSX.Element {
                     </button>
                     <button
                       type="button"
-                      onClick={() => fileInputRef.current?.click()}
+                      onClick={() => resumeRef.current?.click()}
                       className="py-2 px-4 text-sm bg-green-50 text-green-700 rounded hover:bg-green-100"
                     >
                       Change Resume
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setFormData({ ...formData, resume: null })}
-                      className="py-2 px-4 text-sm bg-red-50 text-red-700 rounded hover:bg-red-100"
-                    >
-                      Remove
                     </button>
                   </div>
                 ) : (
                   <button
                     type="button"
-                    onClick={() => fileInputRef.current?.click()}
+                    onClick={() => resumeRef.current?.click()}
                     className="py-2 px-4 text-sm bg-primary-50 text-primary-700 rounded hover:bg-primary-100"
                   >
                     Upload Resume
@@ -293,7 +272,7 @@ function Profile(): React.JSX.Element {
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-4 border-b pb-2 text-gray-800">Education</h2>
           <div className="space-y-8">
-            {formData.education?.map((edu) => (
+            {education.map((edu) => (
               <div key={edu.id} className="p-4 border rounded-md relative bg-gray-50 mt-4">
                 <button
                   type="button"
@@ -324,7 +303,7 @@ function Profile(): React.JSX.Element {
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-4 border-b pb-2 text-gray-800">Projects</h2>
           <div className="space-y-8">
-            {formData.projects?.map((proj) => (
+            {projects.map((proj) => (
               <div key={proj.id} className="p-4 border rounded-md relative bg-gray-50 mt-4">
                 <button
                   type="button"

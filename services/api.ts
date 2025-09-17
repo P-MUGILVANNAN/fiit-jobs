@@ -138,7 +138,8 @@ export const updateUserProfile = async (
     Object.entries(data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         if (Array.isArray(value)) {
-          value.forEach((item) => formData.append(key, item));
+          // Serialize arrays (education, projects, skills) to JSON string
+          formData.append(key, JSON.stringify(value));
         } else {
           formData.append(key, value as any);
         }
