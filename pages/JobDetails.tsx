@@ -3,9 +3,15 @@ import { useParams, Link } from "react-router-dom";
 import * as api from "../services/api";
 import { Job } from "../types";
 import { useAuth } from "../context/AuthContext";
-import Spinner from "../components/Spinner";
 import Alert from "../components/Alert";
-import { MapPin, Calendar, DollarSign, Briefcase, Award, Tag } from "lucide-react";
+import {
+  MapPin,
+  Calendar,
+  DollarSign,
+  Briefcase,
+  Award,
+  Tag,
+} from "lucide-react";
 
 function JobDetails(): React.JSX.Element {
   const { id } = useParams<{ id: string }>();
@@ -19,22 +25,37 @@ function JobDetails(): React.JSX.Element {
     message: string;
   } | null>(null);
   const [isApplying, setIsApplying] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
 
   const [similarJobs, setSimilarJobs] = useState<Job[]>([]);
   const [similarJobsLoading, setSimilarJobsLoading] = useState(false);
   const [similarJobsError, setSimilarJobsError] = useState("");
 
   useEffect(() => {
-    const fetchJob = async (): Promise<void> => {
+    const fetchJobAndStatus = async (): Promise<void> => {
       if (!id) return;
+      setLoading(true);
+      setError("");
       try {
-        setLoading(true);
         const fetchedJob = await api.fetchJobById(id);
-        if (fetchedJob) {
-          setJob(fetchedJob);
-          fetchSimilarJobs(fetchedJob.category);
-        } else {
+        if (!fetchedJob) {
           setError("Job not found.");
+          setLoading(false);
+          return;
+        }
+        setJob(fetchedJob);
+        fetchSimilarJobs(fetchedJob.category);
+
+        if (isAuthenticated) {
+          try {
+            const applicationsResponse = await api.getUserApplications();
+            const alreadyApplied = applicationsResponse.applications.some(
+              (app: any) => app.job?._id === id
+            );
+            setHasApplied(alreadyApplied);
+          } catch (appError) {
+            console.error("Failed to check application status:", appError);
+          }
         }
       } catch (err) {
         setError("Failed to fetch job details.");
@@ -42,15 +63,17 @@ function JobDetails(): React.JSX.Element {
         setLoading(false);
       }
     };
-    fetchJob();
-  }, [id]);
+    fetchJobAndStatus();
+  }, [id, isAuthenticated]);
 
   const fetchSimilarJobs = async (category: string): Promise<void> => {
     try {
       setSimilarJobsLoading(true);
       setSimilarJobsError("");
       const response = await api.fetchJobs({ category, limit: 4 });
-      const filteredSimilarJobs = response.jobs.filter(job => job._id !== id);
+      const filteredSimilarJobs = response.jobs.filter(
+        (job) => job._id !== id
+      );
       setSimilarJobs(filteredSimilarJobs);
     } catch (err) {
       setSimilarJobsError("Failed to fetch similar jobs.");
@@ -60,11 +83,12 @@ function JobDetails(): React.JSX.Element {
   };
 
   const handleApply = async (): Promise<void> => {
-    if (!id) return;
+    if (!id || hasApplied) return;
     setIsApplying(true);
     setApplyStatus(null);
     try {
       await api.applyToJob(id);
+      setHasApplied(true);
       setApplyStatus({
         type: "success",
         message: "Successfully applied for this job!",
@@ -81,7 +105,7 @@ function JobDetails(): React.JSX.Element {
   if (loading)
     return (
       <div className="flex justify-center py-12">
-        <Spinner />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
       </div>
     );
 
@@ -92,8 +116,14 @@ function JobDetails(): React.JSX.Element {
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Breadcrumb */}
       <nav className="mb-6 text-sm text-gray-500">
-        <Link to="/" className="hover:text-primary-600">Home</Link> &gt; 
-        <Link to="/jobs" className="hover:text-primary-600 ml-1">Jobs</Link> &gt; 
+        <Link to="/" className="hover:text-primary-600">
+          Home
+        </Link>{" "}
+        &gt;
+        <Link to="/jobs" className="hover:text-primary-600 ml-1">
+          Jobs
+        </Link>{" "}
+        &gt;
         <span className="ml-1 text-gray-700">{job.title}</span>
       </nav>
 
@@ -108,7 +138,7 @@ function JobDetails(): React.JSX.Element {
           <div className="flex-1">
             <h1 className="text-3xl font-bold text-gray-900">{job.title}</h1>
             <p className="text-xl text-gray-700 mt-1">{job.companyName}</p>
-            
+
             <div className="flex flex-wrap items-center gap-4 mt-4 text-gray-600">
               <div className="flex items-center">
                 <MapPin size={18} className="mr-1" />
@@ -132,7 +162,7 @@ function JobDetails(): React.JSX.Element {
               </div>
             </div>
           </div>
-          
+
           <div className="w-full md:w-auto flex flex-col gap-3 mt-4 md:mt-0">
             {isAuthenticated ? (
               <>
@@ -161,14 +191,21 @@ function JobDetails(): React.JSX.Element {
                     )}
                     <button
                       onClick={handleApply}
-                      disabled={isApplying || applyStatus?.type === "success"}
-                      className="w-full md:w-40 bg-primary-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-primary-700 transition duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
+                      disabled={isApplying || hasApplied}
+                      className="w-full md:w-40 bg-primary-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-primary-700 transition duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center relative h-12"
                     >
-                      {isApplying
-                        ? <><Spinner size="sm" className="mr-2" /> Applying...</>
-                        : applyStatus?.type === "success"
-                        ? "Applied ✓"
-                        : "Apply Now"}
+                      {isApplying ? (
+                        <>
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                            <span className="ml-2">Applying...</span>
+                          </div>
+                        </>
+                      ) : hasApplied ? (
+                        "Applied ✓"
+                      ) : (
+                        "Apply Now"
+                      )}
                     </button>
                   </>
                 )}
@@ -197,13 +234,13 @@ function JobDetails(): React.JSX.Element {
               Job Description
             </h2>
             <p className="text-gray-700 leading-relaxed">{job.description}</p>
-            
+
             <h2 className="text-xl font-semibold mb-4 mt-8 text-gray-800 border-b pb-2 flex items-center">
               <Award size={20} className="mr-2" />
               Required Skills
             </h2>
             <div className="flex flex-wrap gap-3">
-              {job.skills.map(skill => (
+              {job.skills.map((skill) => (
                 <span
                   key={skill}
                   className="bg-primary-100 text-primary-800 text-sm font-semibold px-4 py-2 rounded-full border border-primary-200"
@@ -213,12 +250,12 @@ function JobDetails(): React.JSX.Element {
               ))}
             </div>
           </div>
-          
+
           <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
             <h2 className="text-xl font-semibold mb-4 text-gray-800 border-b pb-2">
               Job Details
             </h2>
-            
+
             <div className="space-y-4">
               <div>
                 <h3 className="text-sm font-medium text-gray-500 flex items-center">
@@ -227,15 +264,17 @@ function JobDetails(): React.JSX.Element {
                 </h3>
                 <p className="text-gray-800 mt-1">{job.qualification}</p>
               </div>
-              
+
               <div>
                 <h3 className="text-sm font-medium text-gray-500 flex items-center">
                   <DollarSign size={16} className="mr-2" />
                   Salary
                 </h3>
-                <p className="text-gray-800 mt-1">₹{job.salary.toLocaleString()}</p>
+                <p className="text-gray-800 mt-1">
+                  ₹{job.salary.toLocaleString()}
+                </p>
               </div>
-              
+
               <div>
                 <h3 className="text-sm font-medium text-gray-500 flex items-center">
                   <Briefcase size={16} className="mr-2" />
@@ -243,7 +282,7 @@ function JobDetails(): React.JSX.Element {
                 </h3>
                 <p className="text-gray-800 mt-1">{job.experience}</p>
               </div>
-              
+
               <div>
                 <h3 className="text-sm font-medium text-gray-500 flex items-center">
                   <Tag size={16} className="mr-2" />
@@ -251,7 +290,7 @@ function JobDetails(): React.JSX.Element {
                 </h3>
                 <p className="text-gray-800 mt-1">{job.jobType}</p>
               </div>
-              
+
               <div>
                 <h3 className="text-sm font-medium text-gray-500 flex items-center">
                   <Tag size={16} className="mr-2" />
@@ -266,17 +305,19 @@ function JobDetails(): React.JSX.Element {
 
       {/* Similar Jobs Section */}
       <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b pb-2">Similar Jobs</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b pb-2">
+          Similar Jobs
+        </h2>
 
         {similarJobsLoading ? (
           <div className="flex justify-center py-6">
-            <Spinner size="md" />
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
           </div>
         ) : similarJobsError ? (
           <Alert type="error" message={similarJobsError} />
         ) : similarJobs.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {similarJobs.map(similarJob => (
+            {similarJobs.map((similarJob) => (
               <Link
                 key={similarJob._id}
                 to={`/jobs/${similarJob._id}`}
@@ -292,15 +333,17 @@ function JobDetails(): React.JSX.Element {
                     <h3 className="text-lg font-semibold text-gray-900">
                       {similarJob.title}
                     </h3>
-                    <p className="text-md text-gray-700">{similarJob.company}</p>
-                    
+                    <p className="text-md text-gray-700">
+                      {similarJob.companyName}
+                    </p>
+
                     <div className="flex items-center mt-2 text-sm text-gray-500">
                       <MapPin size={14} className="mr-1" />
                       <span>{similarJob.location}</span>
                     </div>
-                    
+
                     <div className="mt-3 flex flex-wrap gap-1">
-                      {similarJob.skills.slice(0, 3).map(skill => (
+                      {similarJob.skills.slice(0, 3).map((skill) => (
                         <span
                           key={skill}
                           className="bg-gray-100 text-gray-800 text-xs font-semibold px-2 py-1 rounded"
@@ -314,7 +357,7 @@ function JobDetails(): React.JSX.Element {
                         </span>
                       )}
                     </div>
-                    
+
                     <div className="mt-3 text-sm text-gray-600">
                       <DollarSign size={14} className="inline mr-1" />
                       ₹{similarJob.salary.toLocaleString()}
@@ -325,7 +368,9 @@ function JobDetails(): React.JSX.Element {
             ))}
           </div>
         ) : (
-          <p className="text-gray-500 text-center py-6">No similar jobs found.</p>
+          <p className="text-gray-500 text-center py-6">
+            No similar jobs found.
+          </p>
         )}
       </div>
     </div>

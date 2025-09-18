@@ -1,5 +1,5 @@
 import axios from "axios";
-import { User, Job, JobResponse } from "../types";
+import { User, Job, JobResponse, Application } from "../types";
 
 const API_BASE = "https://jobs-backend-z4z9.onrender.com/api";
 
@@ -171,16 +171,18 @@ export const updateUserProfile = async (
 /**
  * 🔹 Fetch jobs with filters & pagination
  */
-export const fetchJobs = async (params: {
-  keyword?: string;
-  location?: string;
-  jobType?: string;
-  experience?: string;
-  qualification?: string;
-  category?: string;
-  page?: number;
-  limit?: number;
-} = {}): Promise<JobResponse> => {
+export const fetchJobs = async (
+  params: {
+    keyword?: string;
+    location?: string;
+    jobType?: string;
+    experience?: string;
+    qualification?: string;
+    category?: string;
+    page?: number;
+    limit?: number;
+  } = {}
+): Promise<JobResponse> => {
   try {
     const response = await axios.get(`${API_BASE}/jobs`, { params });
 
@@ -211,5 +213,49 @@ export const fetchJobById = async (id: string): Promise<Job> => {
     return response.data as Job;
   } catch (error) {
     throw handleApiError(error, "Failed to fetch job details");
+  }
+};
+
+/**
+ * 🔹 Apply for a job by ID
+ */
+export const applyToJob = async (jobId: string): Promise<any> => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("No authentication token found");
+
+    const response = await axios.post(
+      `${API_BASE}/user/applications/${jobId}`,
+      {}, // Request body is empty, as per the backend route
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw handleApiError(error, "Failed to apply for the job");
+  }
+};
+
+/**
+ * 🔹 Get all jobs applied by the logged-in user
+ */
+export const getUserApplications = async (): Promise<{
+  success: boolean;
+  count: number;
+  applications: Application[];
+}> => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("No authentication token found");
+
+    const response = await axios.get(`${API_BASE}/user/applications`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    return response.data;
+  } catch (error) {
+    throw handleApiError(error, "Failed to fetch user applications");
   }
 };
