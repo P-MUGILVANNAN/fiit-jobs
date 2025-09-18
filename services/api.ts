@@ -213,3 +213,24 @@ export const fetchJobById = async (id: string): Promise<Job> => {
     throw handleApiError(error, "Failed to fetch job details");
   }
 };
+
+// Apply Job
+
+export const applyToJob = async (jobId: string): Promise<any> => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("No authentication token found");
+
+    const response = await axios.post(
+      `${API_BASE}/applications/${jobId}`,
+      {}, // Request body is empty, as per the backend route
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    throw handleApiError(error, "Failed to apply for the job");
+  }
+};
