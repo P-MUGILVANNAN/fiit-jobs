@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import * as api from '../services/api';
@@ -12,10 +11,11 @@ function Applications(): React.JSX.Element {
   useEffect(() => {
     const fetchApplications = async (): Promise<void> => {
       try {
-        const apps = await api.getUserApplications();
-        setApplications(apps);
+        const response = await api.getUserApplications();
+        setApplications(response.applications || []);
       } catch (error) {
         console.error("Failed to fetch applications", error);
+        setApplications([]);
       } finally {
         setLoading(false);
       }
@@ -31,6 +31,10 @@ function Applications(): React.JSX.Element {
         return 'bg-green-100 text-green-800';
       case ApplicationStatus.Rejected:
         return 'bg-red-100 text-red-800';
+      case ApplicationStatus.ShortListed:
+        return 'bg-purple-100 text-purple-800';
+      case ApplicationStatus.Applied:
+        return 'bg-blue-100 text-blue-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -50,16 +54,20 @@ function Applications(): React.JSX.Element {
               <tr>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job Title</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {applications.map(app => (
-                <tr key={app.id} className="hover:bg-gray-50 transition-colors">
+                <tr key={app._id || app.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <Link to={`/jobs/${app.job.id}`} className="text-sm font-medium text-blue-600 hover:text-blue-900">{app.job.title}</Link>
+                    <Link to={`/jobs/${app.job._id || app.job.id}`} className="text-sm font-medium text-blue-600 hover:text-blue-900">
+                      {app.job.title}
+                    </Link>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.job.company}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.job.companyName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.job.location}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(app.status)}`}>
                       {app.status}

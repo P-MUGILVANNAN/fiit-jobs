@@ -79,9 +79,11 @@ export interface Job {
 // ================= Application Related =================
 
 export enum ApplicationStatus {
-  Pending = "Pending",
-  Selected = "Selected",
-  Rejected = "Rejected",
+  Pending = "pending",
+  Selected = "selected",
+  Rejected = "rejected",
+  ShortListed = "shortlisted",
+  Applied = "applied"
 }
 
 export interface Application {
