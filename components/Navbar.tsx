@@ -60,7 +60,7 @@ function Navbar(): React.JSX.Element {
           <div className="hidden lg:block">
             {isAuthenticated ? (
                <div className="flex items-center space-x-4">
-                <span className="text-gray-600 text-sm">Welcome, {user?.name}</span>
+                <span className="text-gray-600">Welcome, {user?.name}</span>
                 <button 
                   onClick={handleLogout} 
                   className="bg-red-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-red-600 transition-colors flex items-center gap-2"
