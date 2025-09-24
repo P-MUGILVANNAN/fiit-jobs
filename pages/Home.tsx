@@ -177,21 +177,21 @@ useEffect(() => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div className="p-4">
               <div className="text-5xl font-extrabold text-primary-600">
-                <AnimatedCounter from={0} to={5000000} duration={2000} suffix="+" />
+                <AnimatedCounter from={0} to={1500} duration={2000} suffix="+" />
               </div>
-              <p className="mt-2 text-lg text-gray-600">Million daily active users</p>
+              <p className="mt-2 text-lg text-gray-600">daily active users</p>
             </div>
             <div className="p-4">
               <div className="text-5xl font-extrabold text-primary-600">
-                <AnimatedCounter from={0} to={9000} duration={2000} suffix="+" />
+                <AnimatedCounter from={0} to={1000} duration={2000} suffix="+" />
               </div>
               <p className="mt-2 text-lg text-gray-600">Open job positions</p>
             </div>
             <div className="p-4">
               <div className="text-5xl font-extrabold text-primary-600">
-                <AnimatedCounter from={0} to={2000000} duration={2000} suffix="+" />
+                <AnimatedCounter from={0} to={2000} duration={2000} suffix="+" />
               </div>
-              <p className="mt-2 text-lg text-gray-600">Million stories shared</p>
+              <p className="mt-2 text-lg text-gray-600">stories shared   </p>
             </div>
           </div>
         </div>
