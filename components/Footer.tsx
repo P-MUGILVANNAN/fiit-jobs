@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FaMapMarkerAlt, FaClock, FaPhone, FaEnvelope } from 'react-icons/fa';
 
 function Footer(): React.JSX.Element {
   return (
@@ -21,8 +22,26 @@ function Footer(): React.JSX.Element {
           </div>
           <div>
             <h3 className="text-lg font-bold text-gray-800 mb-4">Contact Us</h3>
-            <p className="text-gray-500">Kamarajar Nagar, Avadi - 600056</p>
-            <p className="text-gray-500">Email: support@fiitjobs.com</p>
+            <div className="space-y-2 text-gray-500">
+              <div className="flex items-start">
+                <FaMapMarkerAlt className="mt-1 mr-2 text-primary-600" />
+                <span>
+                  No.8, 1st Floor, Kamaraj Nagar Main Road, Kamaraj Nagar, Avadi, Chennai - 71.
+                </span>
+              </div>
+              <div className="flex items-center">
+                <FaClock className="mr-2 text-primary-600" />
+                <span>9:00 AM - 7:00 PM</span>
+              </div>
+              <div className="flex items-center">
+                <FaPhone className="mr-2 text-primary-600" />
+                <span>Call us: +91 86955 77650</span>
+              </div>
+              <div className="flex items-center">
+                <FaEnvelope className="mr-2 text-primary-600" />
+                <span>Email: support@fiitjobs.com</span>
+              </div>
+            </div>
           </div>
         </div>
         <div className="mt-8 border-t border-gray-200 pt-4 text-center text-gray-500">
