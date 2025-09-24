@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import * as api from '../services/api';
 import { Application, ApplicationStatus } from '../types';
 import Spinner from '../components/Spinner';
+import { Briefcase, Building, MapPin, CheckCircle, Clock, XCircle, Star, Send } from 'lucide-react';
 
 function Applications(): React.JSX.Element {
   const [applications, setApplications] = useState<Application[]>([]);
@@ -23,60 +24,55 @@ function Applications(): React.JSX.Element {
     fetchApplications();
   }, []);
 
-  const getStatusColor = (status: ApplicationStatus): string => {
+  const getStatusInfo = (status: ApplicationStatus) => {
     switch (status) {
       case ApplicationStatus.Pending:
-        return 'bg-yellow-100 text-yellow-800';
+        return { color: 'bg-yellow-100 text-yellow-800', icon: <Clock size={16} /> };
       case ApplicationStatus.Selected:
-        return 'bg-green-100 text-green-800';
+        return { color: 'bg-green-100 text-green-800', icon: <CheckCircle size={16} /> };
       case ApplicationStatus.Rejected:
-        return 'bg-red-100 text-red-800';
+        return { color: 'bg-red-100 text-red-800', icon: <XCircle size={16} /> };
       case ApplicationStatus.ShortListed:
-        return 'bg-purple-100 text-purple-800';
+        return { color: 'bg-purple-100 text-purple-800', icon: <Star size={16} /> };
       case ApplicationStatus.Applied:
-        return 'bg-blue-100 text-blue-800';
+        return { color: 'bg-blue-100 text-blue-800', icon: <Send size={16} /> };
       default:
-        return 'bg-gray-100 text-gray-800';
+        return { color: 'bg-gray-100 text-gray-800', icon: <Briefcase size={16} /> };
     }
   };
 
   if (loading) return <div className="flex justify-center py-12"><Spinner /></div>;
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-lg max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">My Applications</h1>
+    <div className="bg-white p-6 sm:p-8 rounded-lg shadow-xl max-w-6xl mx-auto">
+      <h1 className="text-3xl font-bold text-gray-900 mb-6 border-b pb-4">My Applications 📄</h1>
       {applications.length === 0 ? (
-        <p className="text-gray-600">You haven't applied for any jobs yet.</p>
+        <p className="text-gray-600 text-center py-10">You haven't applied for any jobs yet. Start exploring now! ✨</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job Title</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {applications.map(app => (
-                <tr key={app._id || app.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <Link to={`/jobs/${app.job._id || app.job.id}`} className="text-sm font-medium text-blue-600 hover:text-blue-900">
-                      {app.job.title}
-                    </Link>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.job.companyName}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.job.location}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(app.status)}`}>
-                      {app.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {applications.map(app => (
+            <div key={app._id || app.id} className="bg-gray-50 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300 transform hover:-translate-y-1">
+              <div className="flex items-center justify-between mb-4">
+                <Link to={`/jobs/${app.job._id || app.job.id}`} className="text-xl font-semibold text-blue-700 hover:text-blue-900 transition-colors">
+                  {app.job.title}
+                </Link>
+                <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${getStatusInfo(app.status).color}`}>
+                  {getStatusInfo(app.status).icon}
+                  <span>{app.status}</span>
+                </div>
+              </div>
+              <div className="space-y-3 text-gray-600">
+                <div className="flex items-center gap-2">
+                  <Building size={18} className="text-gray-500" />
+                  <span>{app.job.companyName}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <MapPin size={18} className="text-gray-500" />
+                  <span>{app.job.location}</span>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
