@@ -46,13 +46,22 @@ const companyLogos = [
 ];
 
 // Reusable component for the company logo slider
+// Reusable component for the company logo slider
 const CompanyLogoSlider = () => (
     <div className="relative w-full overflow-hidden py-4">
         <div className="flex animate-scroll-logos whitespace-nowrap">
             {/* Duplicate the logos to create a seamless loop */}
             {[...companyLogos, ...companyLogos].map((logo, index) => (
-                <div key={index} className="flex-shrink-0 mx-8">
-                    <img src={logo} alt={`Company Logo ${index}`} className="h-10" />
+                <div 
+                    key={index} 
+                    // ✅ CONFIG FROM ABOUT PAGE APPLIED: w-40 h-24, p-4, bg-white, shadow-md, flex-shrink-0 mx-4
+                    className="flex-shrink-0 mx-4 w-40 h-24 p-4 bg-white rounded-lg shadow-md flex items-center justify-center"
+                >
+                    <img 
+                        src={logo} 
+                        alt={`Company Logo ${index}`} 
+                        className="max-h-full max-w-full object-contain" 
+                    />
                 </div>
             ))}
         </div>
