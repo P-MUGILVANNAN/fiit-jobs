@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { Briefcase, Home, Info, FileText, User, LogIn, UserPlus, LogOut, Menu, X, Rocket } from "lucide-react";
+import { Briefcase, Home, Info, FileText, User, LogIn, UserPlus, LogOut, Menu, X, Rocket, BookOpen } from "lucide-react";
 import { useAuth } from '../context/AuthContext';
 
 function Navbar(): React.JSX.Element {
@@ -52,6 +52,7 @@ function Navbar(): React.JSX.Element {
               <NavLink to="/" className={navLinkClasses}><Home size={18} />Home</NavLink>
               <NavLink to="/jobs" className={navLinkClasses}><Briefcase size={18} />Jobs</NavLink>
               <NavLink to="/about" className={navLinkClasses}><Info size={18} />About Us</NavLink>
+              <NavLink to="/blog" className={navLinkClasses}><BookOpen size={18} />Blog</NavLink>
               {isAuthenticated && (
                 <>
                   <NavLink to="/applications" className={navLinkClasses}><FileText size={18} />My Applications</NavLink>
@@ -117,6 +118,7 @@ function Navbar(): React.JSX.Element {
           <NavLink to="/" className={mobileNavLinkClasses} onClick={() => setIsOpen(false)}><Home size={20} />Home</NavLink>
           <NavLink to="/jobs" className={mobileNavLinkClasses} onClick={() => setIsOpen(false)}><Briefcase size={20} />Jobs</NavLink>
           <NavLink to="/about" className={mobileNavLinkClasses} onClick={() => setIsOpen(false)}><Info size={20} />About Us</NavLink>
+          <NavLink to="/blog" className={mobileNavLinkClasses} onClick={() => setIsOpen(false)}><BookOpen size={20} />Blog</NavLink>
           {isAuthenticated && (
             <>
               <NavLink to="/applications" className={mobileNavLinkClasses} onClick={() => setIsOpen(false)}><FileText size={20} />My Applications</NavLink>
