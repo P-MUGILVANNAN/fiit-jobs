@@ -13,6 +13,8 @@ import Profile from './pages/Profile';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import About from './pages/About';
+import BlogFAQ from './pages/BlogFAQ';
+import BlogPost from './pages/BlogPost';
 
 function App(): React.JSX.Element {
   return (
@@ -26,6 +28,8 @@ function App(): React.JSX.Element {
             <Route path="/jobs" element={<Jobs />} />
             <Route path="/jobs/:id" element={<JobDetails />} />
             <Route path="/about" element={<About />} />
+            <Route path="/blog" element={<BlogFAQ />} />
+            <Route path="/blog/:id" element={<BlogPost />} />
             <Route path="/applications" element={
               <ProtectedRoute>
                 <Applications />
