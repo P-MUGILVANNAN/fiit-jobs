@@ -312,17 +312,7 @@ function Profile(): React.JSX.Element {
                     Cancel
                   </button>
                 </div>
-              ) : (
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <button
-                    onClick={() => handleEditSection(activeSection)}
-                    className="w-full flex items-center justify-center gap-2 bg-blue-500 text-white py-3 px-4 rounded-xl font-medium hover:bg-blue-600 transition-all duration-200"
-                  >
-                    <Edit className="w-5 h-5" />
-                    Edit {activeSection === 'basic' ? 'Profile' : activeSection}
-                  </button>
-                </div>
-              )}
+              ) : null}
             </div>
           </div>
 
