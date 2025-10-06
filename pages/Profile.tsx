@@ -23,7 +23,8 @@ import {
   Github,
   Calendar,
   X,
-  Edit
+  Edit,
+  Tag
 } from 'lucide-react';
 
 function Profile(): React.JSX.Element {
@@ -50,6 +51,7 @@ function Profile(): React.JSX.Element {
         email: authUser.email,
         skills: authUser.skills || [],
         experience: authUser.experience || '',
+        category: authUser.category || 'jobseeker',
         about: authUser.about || '',
         location: authUser.location || '',
         phone: authUser.phone || '',
@@ -171,6 +173,7 @@ function Profile(): React.JSX.Element {
         email: authUser.email,
         skills: authUser.skills || [],
         experience: authUser.experience || '',
+        category: authUser.category || 'jobseeker',
         about: authUser.about || '',
         location: authUser.location || '',
         phone: authUser.phone || '',
@@ -199,6 +202,17 @@ function Profile(): React.JSX.Element {
       </div>
     </div>
   );
+
+  const categoryOptions = [
+    { value: 'jobseeker', label: 'Job Seeker' },
+    { value: 'fresher', label: 'Fresher' },
+    { value: 'housewife', label: 'Housewife' },
+    { value: 'student', label: 'Student' },
+    { value: 'experienced', label: 'Experienced Professional' },
+    { value: 'freelancer', label: 'Freelancer' },
+    { value: 'career break', label: 'Career Break' },
+    { value: 'others', label: 'Others' },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
@@ -242,6 +256,11 @@ function Profile(): React.JSX.Element {
                 </div>
                 <h2 className="text-xl font-semibold mt-4 text-gray-900">{formData.name || 'Your Name'}</h2>
                 <p className="text-gray-600 text-sm">{formData.experience || 'Add your experience'}</p>
+                {formData.category && (
+                  <span className="inline-block mt-1 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                    {categoryOptions.find(opt => opt.value === formData.category)?.label}
+                  </span>
+                )}
               </div>
 
               <nav className="space-y-2">
@@ -404,6 +423,21 @@ function Profile(): React.JSX.Element {
                         </select>
                       </div>
 
+                      {/* Category Field - Added after Experience */}
+                      <div>
+                        <label htmlFor="category" className={labelClass}>
+                          <Tag className="w-4 h-4" />
+                          Category
+                        </label>
+                        <select name="category" id="category" value={formData.category || 'jobseeker'} onChange={handleChange} className={inputClass}>
+                          {categoryOptions.map(option => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
                       <div className="md:col-span-2">
                         <label className={labelClass}>
                           <BookOpen className="w-4 h-4" />
@@ -475,6 +509,23 @@ function Profile(): React.JSX.Element {
                       </div>
                       
                       <ViewField label="Experience" value={formData.experience || ''} icon={Briefcase} />
+                      
+                      {/* Category View Field */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-600 mb-1 flex items-center gap-2">
+                          <Tag className="w-4 h-4" />
+                          Category
+                        </label>
+                        <div className="p-3 bg-gray-50 rounded-lg border border-gray-200 min-h-[44px]">
+                          {formData.category ? (
+                            <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
+                              {categoryOptions.find(opt => opt.value === formData.category)?.label}
+                            </span>
+                          ) : (
+                            <span className="text-gray-400 italic">Not specified</span>
+                          )}
+                        </div>
+                      </div>
                       
                       <div className="mb-4">
                         <label className="block text-sm font-medium text-gray-600 mb-1 flex items-center gap-2">

@@ -15,6 +15,17 @@ export enum ExperienceLevel {
   FivePlus = "5+ Years",
 }
 
+export enum Category {
+  JobSeeker = "jobseeker",
+  Fresher = "fresher",
+  Housewife = "housewife",
+  Student = "student",
+  Experienced = "experienced",
+  Freelancer = "freelancer",
+  CareerBreak = "career break",
+  Others = "others",
+}
+
 // ================= User Related =================
 
 export interface Education {
@@ -47,6 +58,7 @@ export interface User {
   phone?: string;
   location?: string;
   experience?: string;
+  category?: Category; // Added category field
   education?: Education[];
   projects?: Project[];
   resume?: string; // filename or path
