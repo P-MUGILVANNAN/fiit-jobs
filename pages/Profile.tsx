@@ -232,7 +232,7 @@ function Profile(): React.JSX.Element {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar Navigation */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-8">
+            <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-20">
               <div className="text-center mb-6">
                 <div className="relative inline-block">
                   <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 overflow-hidden border-4 border-white shadow-lg">

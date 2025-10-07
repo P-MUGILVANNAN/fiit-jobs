@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
@@ -15,6 +14,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import About from './pages/About';
 import BlogFAQ from './pages/BlogFAQ';
 import BlogPost from './pages/BlogPost';
+import Resume from './pages/Resume';
+
 
 function App(): React.JSX.Element {
   return (
@@ -30,16 +31,26 @@ function App(): React.JSX.Element {
             <Route path="/about" element={<About />} />
             <Route path="/blog" element={<BlogFAQ />} />
             <Route path="/blog/:id" element={<BlogPost />} />
-            <Route path="/applications" element={
-              <ProtectedRoute>
-                <Applications />
-              </ProtectedRoute>
-            } />
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            } />
+
+            {/* Resume routes */}
+            <Route path="/resume" element={<Resume />} />
+
+            <Route
+              path="/applications"
+              element={
+                <ProtectedRoute>
+                  <Applications />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </Layout>
       </BrowserRouter>
