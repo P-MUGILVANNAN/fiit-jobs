@@ -21,7 +21,7 @@ const templates: Template[] = [
   { id: 8, name: 'Creative Pro', image: '/templates/best-resume.jpg', link: `${backendBase}Best Resume.docx` },
   { id: 9, name: 'Modern Clean', image: '/templates/recent-college-graduate-resume.jpg', link: `${backendBase}Recent College Graduate Resume.docx` },
   { id: 10, name: 'Professional Plus', image: '/templates/traditional-simple-resume.jpg', link: `${backendBase}Traditional Simple Resume.docx` },
-  { id: 11, name: 'Designer', image: '/templates/two-page-resume.jpg', link: `${backendBase}Tow Page Resume.docx` },
+  { id: 11, name: 'Designer', image: '/templates/two-page-resume.jpg', link: `${backendBase}Two Page Resume.docx` },
   { id: 12, name: 'Executive', image: '/templates/banking-resume.jpg', link: `${backendBase}Banking Resume.docx` },
   { id: 13, name: 'Minimalist', image: '/templates/entry-level-resume.jpg', link: `${backendBase}Entry Level Resume.docx` },
   { id: 14, name: 'Startup', image: '/templates/business-resume.jpg', link: `${backendBase}Business Resume.docx` },
