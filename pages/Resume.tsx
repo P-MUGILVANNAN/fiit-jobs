@@ -11,20 +11,20 @@ interface Template {
 const backendBase = "https://jobs-backend-z4z9.onrender.com/resumes/";
 
 const templates: Template[] = [
-  { id: 1, name: 'Professional', image: '/templates/professional-elite-resume.jpg', link: `${backendBase}Professional.docx` },
+  { id: 1, name: 'Professional', image: '/templates/professional-elite-resume.jpg', link: `${backendBase}Professional Elite Resume.docx` },
   { id: 2, name: 'ATS Compatible Resume', image: '/templates/ats-compatible-resume.jpg', link: `${backendBase}ATS Compatible Resume.docx` },
   { id: 3, name: 'ATS Compliant Resume', image: '/templates/ats-compliant-resume.jpg', link: `${backendBase}ATS Compliant Resume.docx` },
-  { id: 4, name: 'Modern', image: '/templates/easy-resume.jpg', link: `${backendBase}Modern.docx` },
-  { id: 5, name: 'Elegant', image: '/templates/career-change-resume.jpg', link: `${backendBase}Elegant.docx` },
-  { id: 6, name: 'Simple', image: '/templates/simple-resume.jpg', link: `${backendBase}Simple.docx` },
-  { id: 7, name: 'Corporate', image: '/templates/mit-resume.jpg', link: `${backendBase}Corporate.docx` },
-  { id: 8, name: 'Creative Pro', image: '/templates/best-resume.jpg', link: `${backendBase}Creative Pro.docx` },
-  { id: 9, name: 'Modern Clean', image: '/templates/recent-college-graduate-resume.jpg', link: `${backendBase}Modern Clean.docx` },
-  { id: 10, name: 'Professional Plus', image: '/templates/traditional-simple-resume.jpg', link: `${backendBase}Professional Plus.docx` },
-  { id: 11, name: 'Designer', image: '/templates/two-page-resume.jpg', link: `${backendBase}Designer.docx` },
-  { id: 12, name: 'Executive', image: '/templates/banking-resume.jpg', link: `${backendBase}Executive.docx` },
-  { id: 13, name: 'Minimalist', image: '/templates/entry-level-resume.jpg', link: `${backendBase}Minimalist.docx` },
-  { id: 14, name: 'Startup', image: '/templates/business-resume.jpg', link: `${backendBase}Startup.docx` },
+  { id: 4, name: 'Modern', image: '/templates/easy-resume.jpg', link: `${backendBase}Easy Resume.docx` },
+  { id: 5, name: 'Elegant', image: '/templates/career-change-resume.jpg', link: `${backendBase}Career Change Resume.docx` },
+  { id: 6, name: 'Simple', image: '/templates/simple-resume.jpg', link: `${backendBase}Simple Resume.docx` },
+  { id: 7, name: 'Corporate', image: '/templates/mit-resume.jpg', link: `${backendBase}MIT Resume.docx` },
+  { id: 8, name: 'Creative Pro', image: '/templates/best-resume.jpg', link: `${backendBase}Best Resume.docx` },
+  { id: 9, name: 'Modern Clean', image: '/templates/recent-college-graduate-resume.jpg', link: `${backendBase}Recent College Graduate Resume.docx` },
+  { id: 10, name: 'Professional Plus', image: '/templates/traditional-simple-resume.jpg', link: `${backendBase}Traditional Simple Resume.docx` },
+  { id: 11, name: 'Designer', image: '/templates/two-page-resume.jpg', link: `${backendBase}Tow Page Resume.docx` },
+  { id: 12, name: 'Executive', image: '/templates/banking-resume.jpg', link: `${backendBase}Banking Resume.docx` },
+  { id: 13, name: 'Minimalist', image: '/templates/entry-level-resume.jpg', link: `${backendBase}Entry Level Resume.docx` },
+  { id: 14, name: 'Startup', image: '/templates/business-resume.jpg', link: `${backendBase}Business Resume.docx` },
   { id: 15, name: 'Classic', image: '/templates/classic-resume.jpg', link: `${backendBase}Classic Resume.docx` },
 ];
 
